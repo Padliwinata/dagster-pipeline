@@ -1,0 +1,3 @@
+scheduler:
+  module: dagster.core.scheduler
+  class: DagsterDaemonScheduler

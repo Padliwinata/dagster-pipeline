@@ -1,0 +1,6 @@
+dagit
+dagster
+dagster-graphql
+pandas
+requests
+beautifulsoup4

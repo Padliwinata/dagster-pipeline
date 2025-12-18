@@ -1,0 +1,40 @@
+name: Deploy Dagster on Push to Main
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.PORT || 22 }}
+        script: |
+          # Navigate to project directory
+          cd /path/to/your/dagster_project
+
+          # Pull latest changes
+          git pull origin main
+
+          # Stop existing containers
+          docker-compose down
+
+          # Build and start new containers
+          docker-compose up --build -d
+
+          # Wait for containers to start
+          sleep 10
+
+          # Check container status
+          docker-compose ps
+
+          # Optional: Show recent logs
+          docker-compose logs --tail=20

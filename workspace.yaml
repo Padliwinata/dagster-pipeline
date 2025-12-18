@@ -1,0 +1,5 @@
+load_from:
+  - python_module:
+      module_name: my_dagster_project.pipelines
+  - python_module:
+      module_name: my_dagster_project.news_scraper
