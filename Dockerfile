@@ -1,29 +1,31 @@
 FROM python:3.9-slim
 
-# Set environment variables
+# Environment
 ENV PYTHONUNBUFFERED=1
 ENV DAGSTER_HOME=/opt/dagster/dagster_home
 
-# Create dagster home directory
+# Create Dagster home
 RUN mkdir -p /opt/dagster/dagster_home
 
-# Set working directory
+# Set workdir
 WORKDIR /opt/dagster/app
 
-# Copy requirements first for better caching
-COPY requirements.txt .
+# Install system deps (optional but recommended)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
+# Install Python deps first (better cache)
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application code
-COPY . .
+# Copy ONLY what runtime needs
+COPY my_dagster_project ./my_dagster_project
+COPY workspace.yaml .
+COPY dagster.yaml .
 
-# Create necessary directories
-RUN mkdir -p /opt/dagster/app/my_dagster_project
-
-# Expose port for dagit
+# Expose Dagster webserver
 EXPOSE 8085
 
-# Command to run dagit
-CMD ["dagit", "--host", "0.0.0.0", "--port", "8085", "-f", "workspace.yaml"]
+# Run Dagster webserver
+CMD ["dagster-webserver", "--host", "0.0.0.0", "--port", "8085"]

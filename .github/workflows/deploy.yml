@@ -1,41 +1,30 @@
-name: Deploy Dagster on Push to Main
+name: Build and Push Dagster Image
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # Allow manual trigger
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-    - name: Deploy to server
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        port: ${{ secrets.PORT || 22 }}
-        script: |
-          # Navigate to project directory
-          cd /path/to/your/dagster_project
+      - uses: actions/checkout@v4
 
-          # Pull latest changes
-          git pull origin main
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-          # Stop existing containers
-          docker-compose down
-
-          # Build and start new containers
-          docker-compose up --build -d
-
-          # Wait for containers to start
-          sleep 10
-
-          # Check container status
-          docker-compose ps
-
-          # Optional: Show recent logs
-          docker-compose logs --tail=20
+      - name: Build and push image
+        run: |
+          docker build \
+            -t ghcr.io/${{ github.repository_owner }}/dagster:latest \
+            .
+          docker push ghcr.io/${{ github.repository_owner }}/dagster:latest

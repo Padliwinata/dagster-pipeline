@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  dagster:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    volumes:
+      - ./my_dagster_project:/opt/dagster/app/my_dagster_project
+      - ./workspace.yaml:/opt/dagster/app/workspace.yaml
+      - ./dagster.yaml:/opt/dagster/app/dagster.yaml
+    environment:
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - NOCO_TOKEN=${NOCO_TOKEN:-Qv3V7ZqqZXa1IMzxqskr3JtC3bEbrzZcGjq5htxF}
+    command: ["dagster", "dev", "--port", "8085", "--host", "0.0.0.0", "-w", "workspace.yaml"]
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+volumes:
+  dagster_home:
