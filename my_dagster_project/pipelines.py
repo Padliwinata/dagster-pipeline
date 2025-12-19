@@ -2,7 +2,7 @@ from dagster import job, op
 
 
 @op
-def get_name():
+def get_name_example():
     return "Dagster"
 
 
@@ -18,7 +18,7 @@ def say_goodbye(name: str):
 
 @job
 def hello_world_job():
-    name = get_name()
+    name = get_name_example()
     say_hello(name)
     say_goodbye(name)
 
