@@ -8,7 +8,7 @@ services:
       - "8085:8085"
     environment:
       - DAGSTER_HOME=/opt/dagster/dagster_home
-      - NOCO_TOKEN=${NOCO_TOKEN}
+      - NOCO_TOKEN=${NOCO_TOKEN:-Qv3V7ZqqZXa1IMzxqskr3JtC3bEbrzZcGjq5htxF}
     command:
       ["dagster", "dev", "--port", "8085", "--host", "0.0.0.0", "-w", "workspace.yaml"]
     restart: unless-stopped
