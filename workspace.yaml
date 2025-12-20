@@ -3,3 +3,5 @@ load_from:
       module_name: my_dagster_project.pipelines
   - python_module:
       module_name: my_dagster_project.news_scraper
+  - python_module:
+      module_name: my_dagster_project.wordcloud_maker
