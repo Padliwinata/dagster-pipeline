@@ -4,3 +4,4 @@ dagster-graphql
 pandas
 requests
 beautifulsoup4
+Sastrawi
